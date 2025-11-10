@@ -1,0 +1,152 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Payment | Quality Education</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<section class="sub-header">
+  <h1>Payment Details</h1>
+</section>
+
+<section class="payment-section">
+  <div class="payment-container">
+    <h2>Complete Your Payment</h2>
+    <p class="total-text">Total Amount: ₹<span id="payAmount">0</span></p>
+    <p id="itemsList"></p>
+
+    <form id="paymentForm" onsubmit="return processPayment(event)">
+      <label>Full Name</label>
+      <input type="text" id="name" placeholder="Enter your full name" required>
+
+      <label>Email</label>
+      <input type="email" id="email" placeholder="Enter your email" required>
+
+      <label>Card Number</label>
+      <input type="text" id="card" placeholder="xxxx xxxx xxxx xxxx" maxlength="16" required>
+
+      <button type="submit" class="pay-btn">Pay Now</button>
+    </form>
+
+    <p id="successMsg" class="success-message"></p>
+  </div>
+</section>
+
+<script>
+document.getElementById("payAmount").textContent = localStorage.getItem("cartTotal") || "0";
+
+
+const items = JSON.parse(localStorage.getItem("cartItems") || "[]");
+if(items.length > 0){
+  document.getElementById("itemsList").innerHTML = "<b>Topics:</b> " + items.join(", ");
+}
+
+function processPayment(event){
+  event.preventDefault();
+  const name = document.getElementById("name").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const card = document.getElementById("card").value.trim();
+
+  if(name === "" || email === "" || card.length < 16){
+    alert("Please fill all details correctly.");
+    return false;
+  }
+
+  document.getElementById("successMsg").textContent = "✅ Payment Successful! Thank you for enrolling.";
+  document.getElementById("paymentForm").reset();
+  localStorage.removeItem("cartTotal");
+  localStorage.removeItem("cartItems");
+
+  setTimeout(() => { window.location.href = "index.html"; }, 3000);
+  return false;
+}
+</script>
+
+</body>
+</html> -->
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Payment | Quality Education</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<section class="sub-header">
+  <h1>Payment Details</h1>
+</section>
+
+<section class="payment-section">
+  <div class="payment-container">
+    <h2>Complete Your Payment</h2>
+    <p class="total-text">Total Amount: ₹<span id="payAmount">0</span></p>
+    <p id="itemsList"></p>
+
+    <form id="paymentForm" onsubmit="return processPayment(event)">
+      <label>Full Name</label>
+      <input type="text" id="name" placeholder="Enter your full name" required>
+      <label>Email</label>
+      <input type="email" id="email" placeholder="Enter your email" required>
+      <label>Card Number</label>
+      <input type="text" id="card" placeholder="xxxx xxxx xxxx xxxx" maxlength="16" required>
+      <button type="submit" class="pay-btn">Pay Now</button>
+    </form>
+
+    <p id="successMsg" class="success-message"></p>
+  </div>
+</section>
+
+<script>
+document.getElementById("payAmount").textContent = localStorage.getItem("cartTotal") || "0";
+const items = JSON.parse(localStorage.getItem("cartItems") || "[]");
+if(items.length > 0){
+  document.getElementById("itemsList").innerHTML = "<b>Topics:</b> " + items.join(", ");
+}
+
+async function processPayment(event){
+  event.preventDefault();
+  const name = document.getElementById("name").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const card = document.getElementById("card").value.trim();
+  const total = localStorage.getItem("cartTotal") || 0;
+
+  if(name === "" || email === "" || card.length < 16){
+    alert("Please fill all details correctly.");
+    return false;
+  }
+
+  const response = await fetch("payment_backend.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name, email, card, items, total })
+  });
+
+  const result = await response.json();
+
+  if(result.status === "success"){
+    document.getElementById("successMsg").textContent = "✅ Payment Successful! Thank you for enrolling.";
+    document.getElementById("paymentForm").reset();
+    localStorage.removeItem("cartTotal");
+    localStorage.removeItem("cartItems");
+    setTimeout(() => { window.location.href = "index.html"; }, 3000);
+  } else {
+    alert("Error: " + (result.message || "Payment failed."));
+  }
+}
+</script>
+
+</body>
+</html> 
